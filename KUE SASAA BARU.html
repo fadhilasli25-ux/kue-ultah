@@ -19,6 +19,43 @@
             position: relative;
         }
 
+		#gameContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ffffffcc;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 80px);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.card {
+    width: 80px;
+    height: 80px;
+    background: #ff80ab;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.card.flipped {
+    background: #fff;
+}
+
         /* Dekorasi Kucing */
         .cat-decor { position: absolute; font-size: 3.5rem; z-index: 0; }
         .cat1 { top: 10%; left: 10%; animation: float 4s infinite ease-in-out; }
@@ -89,6 +126,11 @@
     <div id="countdown"></div>
     <div id="age-number">22</div>
 
+	<div id="gameContainer">
+    <h2>Cocokkan Kartunya dulu ya! 🐱</h2>
+    <div class="game-board" id="gameBoard"></div>
+</div>
+
     <div class="cake-wrapper" onclick="startSequence()">
         <div class="candles">
             <div class="candle"><div class="flame"></div></div>
@@ -150,6 +192,15 @@
     for (let i = 0; i < 60; i++) {
         createConfetti();
     }
+	
+		function tiupLilin() {
+    if (document.getElementById("gameContainer").style.display !== "none") {
+        alert("Selesaikan gamenya dulu ya!");
+        return;
+    }
+}
+
+    // kode tiup lilin kamu yang lama
 }
 
         function createConfetti() {
@@ -165,6 +216,68 @@
                 { transform: `translate(${(Math.random()-0.5)*400}px, -${window.innerHeight}px) rotate(720deg)`, opacity: 0 }
             ], { duration: 2000, easing: 'ease-out' }).onfinish = () => c.remove();
         }
+
+		<script>
+const emojis = ['🐱','🎂','🎉','❤️'];
+let cards = [...emojis, ...emojis];
+cards.sort(() => 0.5 - Math.random());
+
+const board = document.getElementById("gameBoard");
+
+let first = null;
+let second = null;
+let lock = false;
+let matched = 0;
+
+cards.forEach((emoji, index) => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.dataset.emoji = emoji;
+    card.innerHTML = "❓";
+
+    card.onclick = () => {
+        if (lock || card.classList.contains("flipped")) return;
+
+        card.innerHTML = emoji;
+        card.classList.add("flipped");
+
+        if (!first) {
+            first = card;
+        } else {
+            second = card;
+            lock = true;
+
+            if (first.dataset.emoji === second.dataset.emoji) {
+                matched += 2;
+                resetTurn();
+
+                if (matched === cards.length) {
+                    setTimeout(() => {
+                        document.getElementById("gameContainer").style.display = "none";
+                        alert("Yey! Sekarang tiup lilinnya 🎂");
+                    }, 500);
+                }
+            } else {
+                setTimeout(() => {
+                    first.innerHTML = "❓";
+                    second.innerHTML = "❓";
+                    first.classList.remove("flipped");
+                    second.classList.remove("flipped");
+                    resetTurn();
+                }, 800);
+            }
+        }
+    };
+
+    board.appendChild(card);
+});
+
+function resetTurn() {
+    first = null;
+    second = null;
+    lock = false;
+}
+</script>
     </script>
 </body>
 </html>
