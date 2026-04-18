@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD SASAAA 22! 🐱</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #b3e5fc, #81d4fa, #fff9c4);
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            color: #d81b60;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Dekorasi Kucing */
+        .cat-decor { position: absolute; font-size: 3.5rem; z-index: 0; }
+        .cat1 { top: 10%; left: 10%; animation: float 4s infinite ease-in-out; }
+        .cat2 { bottom: 15%; right: 10%; animation: float 4s infinite ease-in-out; animation-delay: 1s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Awan */
+        .cloud {
+            position: absolute; background: white; width: 120px; height: 40px;
+            border-radius: 50px; opacity: 0.8; z-index: -1;
+            animation: moveCloud 20s infinite linear;
+        }
+        @keyframes moveCloud { from { left: -150px; } to { left: 110%; } }
+
+        /* Kue */
+        .cake-wrapper { position: relative; cursor: pointer; z-index: 5; }
+        .tier1 { width: 180px; height: 60px; background: #ff80ab; border-radius: 10px; margin: 0 auto; border: 3px solid white; }
+        .tier2 { width: 140px; height: 50px; background: #ff4081; border-radius: 8px; margin: -35px auto 0; position: relative; z-index: 2; border: 3px solid white; }
+        .tier3 { width: 100px; height: 40px; background: #f50057; border-radius: 6px; margin: -30px auto 0; position: relative; z-index: 3; border: 3px solid white; }
+        .plate { width: 240px; height: 15px; background: #fff; border-radius: 50%; margin: -5px auto 0; }
+
+        /* Lilin & Api (Menyala di Awal) */
+        .candles {
+            position: absolute; width: 100%; top: -35px; left: 0; z-index: 10;
+            display: flex; justify-content: center; gap: 12px;
+        }
+        .candle { width: 8px; height: 35px; background: #fff59d; border: 1.5px solid #fbc02d; position: relative; }
+        
+        .flame {
+            width: 12px; height: 20px; background: #ffeb3b; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: absolute; top: -22px; left: -2px; box-shadow: 0 0 10px #fff176;
+            animation: flicker 0.1s infinite alternate;
+            display: block; /* Memastikan api muncul di awal */
+        }
+
+        /* Class untuk mematikan api */
+        .blown-out .flame {
+            display: none !important;
+        }
+
+        @keyframes flicker { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        /* Angka 22 */
+        #age-number {
+            font-size: 7rem; font-weight: bold; color: #ffeb3b;
+            text-shadow: 4px 4px 0 #f50057;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            opacity: 0; z-index: 100; pointer-events: none;
+        }
+        .show-age { animation: popIn 0.8s forwards; }
+        @keyframes popIn { to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
+        #message { margin-top: 30px; text-align: center; font-size: 1.5rem; color: #ad1457; }
+        #countdown { font-size: 5rem; font-weight: bold; position: absolute; color: #f50057; display: none; z-index: 20; }
+        .confetti { position: absolute; width: 10px; height: 10px; z-index: 99; }
+    </style>
+</head>
+<body>
+
+    <div class="cat-decor cat1">😺</div>
+    <div class="cat-decor cat2">😻</div>
+    <div class="cloud" style="top: 15%;"></div>
+
+    <div id="countdown"></div>
+    <div id="age-number">22</div>
+
+    <div class="cake-wrapper" onclick="startSequence()">
+        <div class="candles">
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+        </div>
+        <div class="tier3"></div>
+        <div class="tier2"></div>
+        <div class="tier1"></div>
+        <div class="plate"></div>
+    </div>
+
+    <h1 id="message">Klik kuenya untuk tiup lilin Sasaaa! 🎂</h1>
+
+	<audio id="birthdaySound" src="soundnya.mpeg"></audio>
+
+    <script>
+        let isStarted = false;
+
+        function startSequence() {
+            if (isStarted) return;
+            isStarted = true;
+
+            const cdBox = document.getElementById('countdown');
+            const msg = document.getElementById('message');
+            let count = 3;
+
+            msg.innerText = "Siap-siap tiup... 💨";
+            cdBox.style.display = 'block';
+            cdBox.innerText = count;
+
+            const timer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    cdBox.innerText = count;
+                } else {
+                    clearInterval(timer);
+                    cdBox.style.display = 'none';
+                    celebrate();
+                }
+            }, 1000);
+        }
+
+        function celebrate() {
+   // MAININ SOUND SAAT LILIN DITIUP
+    document.getElementById('birthdaySound').play();
+
+    // MATIKAN LILIN
+    document.querySelectorAll('.candle').forEach(c => c.classList.add('blown-out'));
+    
+    // Munculkan Angka 22
+    document.getElementById('age-number').classList.add('show-age');
+
+    // Ganti Pesan
+    const msg = document.getElementById('message');
+    msg.innerHTML = "CONGRATS AND HAPPY BIRTHDAY SASAAA 💖🐾";
+
+    // Petasan
+    for (let i = 0; i < 60; i++) {
+        createConfetti();
+    }
+}
+
+        function createConfetti() {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            document.body.appendChild(c);
+            const colors = ['#ff4081', '#00e5ff', '#ffeb3b', '#76ff03', '#ffffff'];
+            c.style.left = Math.random() * window.innerWidth + 'px';
+            c.style.top = '100%';
+            c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            c.animate([
+                { transform: 'translateY(0) rotate(0)', opacity: 1 },
+                { transform: `translate(${(Math.random()-0.5)*400}px, -${window.innerHeight}px) rotate(720deg)`, opacity: 0 }
+            ], { duration: 2000, easing: 'ease-out' }).onfinish = () => c.remove();
+        }
+    </script>
+</body>
+</html>
